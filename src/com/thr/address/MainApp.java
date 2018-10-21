@@ -65,6 +65,10 @@ public class MainApp extends Application {
             loader.setLocation(MainApp.class.getResource("view/PersonOverview.fxml"));
             AnchorPane personOverView = loader.load();
             rootLayout.setCenter(personOverView);
+
+            //Á¬½ÓMainApp ºÍ PersonOverviewController
+            PersonOverviewController controller = loader.getController();
+            controller.setMainApp(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
