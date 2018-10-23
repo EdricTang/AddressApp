@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="280.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.thr.address.PersonEditDialogController">
+<AnchorPane prefHeight="280.0" prefWidth="380.0" styleClass="background" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.thr.address.PersonEditDialogController">
    <children>
       <GridPane layoutX="12.0" layoutY="11.0" prefHeight="202.0" prefWidth="359.0" AnchorPane.bottomAnchor="67.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="11.0">
         <columnConstraints>
@@ -63,8 +63,8 @@
       </GridPane>
       <HBox layoutX="253.0" layoutY="230.0" prefHeight="23.0" prefWidth="186.0" spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
          <children>
-            <Button mnemonicParsing="false" prefWidth="90.0" text="Save" onAction="#handleSave" />
-            <Button mnemonicParsing="false" prefWidth="90.0" text="Cancel" onAction="#handleCancel"/>
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#handleSave" prefWidth="90.0" text="Save" />
+            <Button mnemonicParsing="false" onAction="#handleCancel" prefWidth="90.0" text="Cancel" />
          </children>
       </HBox>
    </children>
