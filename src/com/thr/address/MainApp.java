@@ -24,6 +24,10 @@ public class MainApp extends Application {
 
     private ObservableList<Person> personData = FXCollections.observableArrayList();
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     public MainApp() {
         personData.add(new Person("Hans", "Muster"));
         personData.add(new Person("Ruth", "Mueller"));
@@ -42,7 +46,7 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("AddressApp");
 
-        this.primaryStage.getIcons().add(new Image("file:resources/images/address_book_32.png"));
+        this.primaryStage.getIcons().add(new Image("images/address_book_32.png"));
 
         initRootLayout();
 
@@ -93,7 +97,7 @@ public class MainApp extends Application {
             //´´½¨ dialog Stage
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Edit Person");
-            dialogStage.getIcons().add(new Image("file:resources/images/edit.png"));
+            dialogStage.getIcons().add(new Image("images/edit.png"));
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
