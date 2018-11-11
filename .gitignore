@@ -17,3 +17,5 @@ out
 #mac
 .DS_Store
 Thumbs.db
+
+*.MF

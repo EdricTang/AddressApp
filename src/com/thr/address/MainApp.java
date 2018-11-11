@@ -1,16 +1,25 @@
 package com.thr.address;
 
 import com.thr.address.model.Person;
+import com.thr.address.model.PersonListWrapper;
+import com.thr.address.view.RootLayoutController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
+import java.util.prefs.Preferences;
 
 /**
  * 主程序
@@ -53,6 +62,9 @@ public class MainApp extends Application {
         showPersonOverview();
     }
 
+    /**
+     * 加载主布局，尝试加载上次打开的person file
+     */
     private void initRootLayout() {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -61,9 +73,18 @@ public class MainApp extends Application {
 
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
+
+            RootLayoutController controller = loader.getController();
+            controller.setMainApp(this);
+
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        File file = getPersonFilePath();
+        if (null != file) {
+            loadPersonDataFromFile(file);
         }
     }
 
@@ -116,4 +137,97 @@ public class MainApp extends Application {
             return false;
         }
     }
+
+    /**
+     * 返回用户最终的preference文件，preference是从操作系统特定位置中读取
+     * 如果没有获取到preference，返回null
+     */
+    public File getPersonFilePath() {
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        String filePath = prefs.get("filePath", null);
+        if (null != filePath) {
+            return new File(filePath);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 设置当前加载文件的路径. 路径被保存在邮件系统特定位置
+     * @param file
+     */
+    public void setPersonFilePath(File file) {
+
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        if (null != file) {
+            prefs.put("filePath", file.getPath());
+
+            //更新stage的title
+            primaryStage.setTitle("AddressApp - " + file.getName());
+        } else {
+            prefs.remove("filePath");
+
+            //更新stage的title
+            primaryStage.setTitle("AddressApp");
+        }
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+
+    /**
+     * 从文件加载person数据，当前的person数据将会被替代
+     * @param file
+     */
+    public void loadPersonDataFromFile(File file) {
+        try {
+            JAXBContext context = JAXBContext.newInstance(PersonListWrapper.class);
+            Unmarshaller um =  context.createUnmarshaller();
+
+            //从文件和解组中读数据
+            PersonListWrapper wrapper = (PersonListWrapper) um.unmarshal(file);
+
+            personData.clear();
+            personData.addAll(wrapper.getPersons());
+
+            //把文件路径保存记录
+            setPersonFilePath(file);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("无法正常读取文件：\n" + file.getPath());
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * 将当前用户数据保存到特定文件
+     * @param file
+     */
+    public void savePersonDataToFile(File file) {
+
+        try {
+            JAXBContext context = JAXBContext.newInstance(PersonListWrapper.class);
+            Marshaller m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            PersonListWrapper wrapper = new PersonListWrapper();
+            wrapper.setPersons(personData);
+
+            m.marshal(wrapper, file);
+
+            setPersonFilePath(file);
+
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("无法正常保存到文件：\n" + file.getPath());
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
+        }
+    }
+
 }

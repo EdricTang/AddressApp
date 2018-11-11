@@ -1,7 +1,9 @@
 package com.thr.address.model;
 
+import com.thr.address.util.LocalDataAdapter;
 import javafx.beans.property.*;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
 /**
@@ -16,6 +18,7 @@ public class Person {
     private final StringProperty street;
     private final IntegerProperty postalCode;
     private final StringProperty city;
+
     private final ObjectProperty<LocalDate> birthday;
 
     public Person() {
@@ -92,6 +95,11 @@ public class Person {
         this.city.set(city);
     }
 
+    /**
+     * 注意，为添加保存、读取文件时的日期转换对LocalData的支持，需要添加适配器到get方法上
+     * @return
+     */
+    @XmlJavaTypeAdapter(LocalDataAdapter.class)
     public LocalDate getBirthday() {
         return birthday.get();
     }
